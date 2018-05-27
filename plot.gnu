@@ -1,0 +1,3 @@
+set size ratio -1
+
+plot 'data.txt' using 1:2:($3*0+.3) with circle title 'Variable goal', '' using 1:2:(column(0)) with labels offset 0,char 0
