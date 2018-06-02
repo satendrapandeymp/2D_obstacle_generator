@@ -50,20 +50,20 @@ int main(int argc, char *argv[])
 
       // For output
       if (step % 200 == 0 && step != 0) scaling();
-      if (step % 1000 == 0 && step != 0) scale = scale - .02;
+      if (step % 1000 == 0 && step != 0) scale = scale - .01;
 
       if (flag == 0) break;
       clearing();
     }
 
-    // To making it in range -5,5
-    scale = .98;
+    // To making it in range
+    scale = 1.02;
     scaling();
 
     for ( i = 0; i<number_of_molecules; i++)
     {
         if (flag == 0) break;
-        cout <<   pos[i][0]  << " " << pos[i][1] << " " << acc[i][0]  << " " << acc[i][1] << endl;
+        cout <<   pos[i][0]  << " " << pos[i][1] << " " << "0.2" << endl;
     }
 
 return 0;
@@ -77,10 +77,10 @@ void update_all(float * posx, float * posy,  float * velx, float  * vely, float 
   *posy = *posy + *vely * delta_time + accy * delta_time * delta_time /2;
 
   // update position with periodic box condition
-  if (*posx > boundry_len) *posx = *posx - (2*boundry_len);
-  else if (*posx + boundry_len < 0) *posx = *posx + (2*boundry_len);
-  if (*posy > boundry_len) *posy = *posy - (2*boundry_len);
-  else if (*posy + boundry_len < 0) *posy = *posy + (2*boundry_len);
+  if (*posx > boundry_len_x) *posx = *posx - (2*boundry_len_x);
+  else if (*posx + boundry_len_x < 0) *posx = *posx + (2*boundry_len_x);
+  if (*posy > boundry_len_y) *posy = *posy - (2*boundry_len_y);
+  else if (*posy + boundry_len_y < 0) *posy = *posy + (2*boundry_len_y);
 
   *velx = *velx + (accx + last_accx) * delta_time /2;
   *vely = *vely + (accy + last_accy) * delta_time /2;
@@ -93,10 +93,10 @@ int force_cal(float posx, float posy, float * accx, float * accy)
 {
 int flagsx = 0;
 int flagsy = 0;
-if ((boundry_len-posx) < cutoff) flagsx++;
-if ((posx + boundry_len ) < cutoff) flagsx--;
-if ((boundry_len-posy) < cutoff) flagsy++;
-if ((posy + boundry_len ) < cutoff) flagsy--;
+if ((boundry_len_x-posx) < cutoff) flagsx++;
+if ((posx + boundry_len_x ) < cutoff) flagsx--;
+if ((boundry_len_y-posy) < cutoff) flagsy++;
+if ((posy + boundry_len_y ) < cutoff) flagsy--;
 
 //cout << flagsx << " " << flagsy << " ";
 
@@ -119,14 +119,14 @@ for (int i = 0; i<9; i++)
 
       for (int j = 0; j<number_of_molecules; j++)
               {
-                  float r = pow( pow( (pos[j][0] + cor_x * 2 * boundry_len )- posx, 2) + pow((pos[j][1] + cor_y * 2 * boundry_len )- posy, 2) , .5);
+                  float r = pow( pow( (pos[j][0] + cor_x * 2 * boundry_len_x )- posx, 2) + pow((pos[j][1] + cor_y * 2 * boundry_len_y )- posy, 2) , .5);
                   if (r < cutoff && r > sigma/100)
                   {
-                      float force = ( pow((sigma/r),13) * 12  - pow((sigma)/r,7) * 6)/ sigma;
-                      *accx = *accx + force * ((pos[j][0] + cor_x * 2 * boundry_len)-posx)/r;
-                      *accy = *accy + force * ((pos[j][1] + cor_y * 2 * boundry_len)-posy)/r;
+                      float force = 1 * ( pow((sigma/r),13) * 12  - pow((sigma)/r,7) * 6)/ sigma;
+                      *accx = *accx + force * ((pos[j][0] + cor_x * 2 * boundry_len_x)-posx)/r;
+                      *accy = *accy + force * ((pos[j][1] + cor_y * 2 * boundry_len_y)-posy)/r;
                    }
-                  else if (r > 4 * boundry_len) return 0;
+                  else if (r > 4 * boundry_len_x) return 0;
                 }
     }
 }
@@ -137,7 +137,8 @@ return 1;
 
 void scaling()
 {
-  boundry_len = boundry_len/scale;
+  boundry_len_x = boundry_len_x/scale;
+  boundry_len_y = boundry_len_y/scale;
   for (int i=0; i<number_of_molecules; i++)
   {
     for (int j = 0; j<2; j++)

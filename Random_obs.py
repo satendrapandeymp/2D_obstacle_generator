@@ -1,16 +1,13 @@
 import numpy as np
 import random
 
-corridor = [-14.7,14.7]
-length   = [-14.7,14.7]
+corridor = [-12.03,12.03]
+length   = [-5.7,5.7]
 
-'''
-with open("Source/Declearation.cpp") as temp:
+with open("../Source/Declearation.cpp") as temp:
     text = temp.read()
     text = text.split("const int total_obstacles = ")[1]
     text = text.split(";")[0]
-'''
-text = "2"
 
 total_obs = int(text)
 
@@ -45,10 +42,10 @@ while(count < 10000):
 
     num = min(distance)
 
-    if num > .7:
+    if num > .5:
         break
 
-    print count
+    #print count
 
 vel = []
 x_vel = np.random.uniform(-.1, .1, total_obs)
